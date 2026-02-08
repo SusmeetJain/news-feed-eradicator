@@ -28,8 +28,6 @@ type OverlayState = {
 };
 
 type ContentScriptState = {
-	snoozeUntil?: number;
-	snoozeTimer?: Timer;
 	injectedCss?: string | null;
 	injectedPageStyleElement?: HTMLStyleElement;
 	injectedThemeStyleElement?: HTMLStyleElement;
@@ -203,32 +201,6 @@ const setCss = async (css: string | null) => {
 	state.injectedPageStyleElement.textContent = css ?? '';
 }
 
-const endSnooze = () => {
-	sendMessage({
-		type: 'requestSiteDetails',
-		path: window.location.pathname,
-		token
-	});
-	state.snoozeTimer = undefined;
-}
-
-const isSnoozing = () => {
-	return state.snoozeUntil != null && state.snoozeUntil > Date.now();
-}
-
-const setSnoozeTimer = (snoozeUntil: number | null) => {
-	state.snoozeUntil = snoozeUntil ?? undefined;
-
-	if (state.snoozeTimer != null) {
-		clearTimeout(state.snoozeTimer);
-	}
-
-	if (snoozeUntil != null) {
-		const delay = snoozeUntil - Date.now();
-		state.snoozeTimer = setTimeout(() => endSnooze(), delay);
-	}
-}
-
 /**
  * Calculate desired state from
  */
@@ -285,16 +257,10 @@ const patchState = (regions: DesiredRegionState[]) => {
 	setCss(css);
 }
 
-const isRegionBlockActive = (region: RegionState) => region.enabled && !isSnoozing()
+const isRegionBlockActive = (region: RegionState) => region.enabled
 
 browser.runtime.onMessage.addListener(async (msg: FromServiceWorkerMessage) => {
 	if (msg.type == 'nfe#siteDetails' && msg.token === token) {
-		if (msg.snoozeUntil != null && msg.snoozeUntil > Date.now()) {
-			setSnoozeTimer(msg.snoozeUntil);
-		} else {
-			setSnoozeTimer(null);
-		}
-
 		state.ready = true;
 		state.siteId = msg.siteId;
 		state.theme.css = msg.theme.css;

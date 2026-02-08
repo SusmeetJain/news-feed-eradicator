@@ -5,17 +5,13 @@ export const CURRENT_STORAGE_SCHEMA_VERSION = 2;
 
 export type QuoteListId = ('builtin' | string) & { __quoteListId: never };
 
-export type SnoozeMode = 'instant' | 'hold';
-
 export type StorageLocalV2 = {
 	version: 2;
 	hideQuotes?: boolean;
 	hideWidgetToolbar?: boolean;
-	snoozeMode?: SnoozeMode;
 	settingsLocked?: boolean;
 	enabledSites?: SiteId[];
 	siteConfig?: Record<SiteId, SiteConfig>;
-	snoozeUntil?: number;
 	quoteLists?: QuoteList[];
 	widgetStyle?: 'contained' | 'transparent';
 	regionHideStyle?: 'blur' | 'hidden';

@@ -1,12 +1,37 @@
-# News Feed Eradicator
+# News Feed Eradicator Strict (Fork)
 
-A browser extension that replaces your social media feeds with a quote.
+A stricter fork of News Feed Eradicator that replaces social media feeds with a quote and does not support snoozing.
 
 [Install Chrome Extension](https://chrome.google.com/webstore/detail/news-feed-eradicator-for/fjcldmjmjhkklehbacihaiopjklihlgg?hl=en)
 
 [Install Firefox Add-on](https://addons.mozilla.org/en-US/firefox/addon/news-feed-eradicator/)
 
 ---------
+
+## Fork goals
+
+- No snooze UI or API path.
+- Feed blocking stays active continuously.
+- Keep the codebase close to upstream where possible for easier maintenance.
+
+## Keeping your fork up to date
+
+Set the original project as `upstream`, then regularly sync:
+
+```bash
+git remote add upstream https://github.com/jordwest/news-feed-eradicator.git
+git fetch upstream
+git checkout main
+git merge upstream/main
+git push origin main
+```
+
+For strict-fork specific changes, use a branch and merge it into your `main` after syncing upstream.
+
+## Contributing back
+
+This exact "no snooze at all" fork is opinionated and may be better shared as a fork/release for users who want strict mode.
+If you want to contribute upstream, the highest-likelihood path is an optional behavior (for example a setting that disables snooze), plus tests/docs.
 
 ## Contributing to News Feed Eradicator
 

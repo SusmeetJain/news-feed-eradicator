@@ -2,7 +2,7 @@ import { generateId } from "../lib/generate-id";
 import { getBrowser } from "../lib/webextension";
 import type { Quote } from "../quote";
 import type { RegionId, SiteId, SiteList } from "../types/sitelist";
-import { type StorageSyncV1, SiteStateTagV1, type StorageLocal, type StorageLocalV2, CURRENT_STORAGE_SCHEMA_VERSION, type SiteConfig, type Theme, defaultQuoteLists, type QuoteListId, type QuoteList, BUILTIN_QUOTE_LIST_ID, type SnoozeMode } from "./schema";
+import { type StorageSyncV1, SiteStateTagV1, type StorageLocal, type StorageLocalV2, CURRENT_STORAGE_SCHEMA_VERSION, type SiteConfig, type Theme, defaultQuoteLists, type QuoteListId, type QuoteList, BUILTIN_QUOTE_LIST_ID } from "./schema";
 
 const ensureMigrated = async (): Promise<void> => {
 	const browser = getBrowser();
@@ -52,7 +52,6 @@ const ensureMigrated = async (): Promise<void> => {
 	const migratedData: StorageLocalV2 = {
 		version: 2,
 		hideQuotes: storageSync.showQuotes === false,
-		snoozeMode: 'instant', // Preserve original snooze behaviour for existing users
 		quoteLists,
 		enabledSites,
 	}
@@ -103,12 +102,6 @@ export const saveSiteEnabled = async (siteId: SiteId, enable: boolean): Promise<
 
 	return setKey('enabledSites', Array.from(sites));
 }
-
-export const loadSnoozeUntil = () => getKey('snoozeUntil', undefined);
-export const saveSnoozeUntil = (snoozeUntil: number | undefined) => setKey('snoozeUntil', snoozeUntil);
-
-export const loadSnoozeMode = () => getKey('snoozeMode', 'hold');
-export const saveSnoozeMode = (snoozeMode: SnoozeMode) => setKey('snoozeMode', snoozeMode);
 
 export const loadSiteConfig = async (siteId: SiteId): Promise<SiteConfig | undefined> => {
 	const sites = await getKey('siteConfig', {});

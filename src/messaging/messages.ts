@@ -22,7 +22,6 @@ type SiteDetails = {
 		css: string,
 	}
 	widgetStyle: 'contained' | 'transparent',
-	snoozeUntil: number | null,
 	hideQuotes: boolean,
 }
 
@@ -39,7 +38,7 @@ type OptionsUpdated = {
 	type: 'nfe#optionsUpdated',
 }
 
-export type ToServiceWorkerMessage = RequestSiteDetails | OpenOptionsPage | NotifyOptionsUpdated | SetSiteTheme | EnableSite | DisableSite | Snooze | RequestQuote | SetQuoteEnabled | InjectCss | RemoveCss | ReadSnooze;
+export type ToServiceWorkerMessage = RequestSiteDetails | OpenOptionsPage | NotifyOptionsUpdated | SetSiteTheme | EnableSite | DisableSite | RequestQuote | SetQuoteEnabled | InjectCss | RemoveCss;
 
 // Request site details from service worker.
 type RequestSiteDetails = {
@@ -88,13 +87,4 @@ type SetSiteTheme = {
 type DisableSite = {
 	type: 'disableSite',
 	siteId: SiteId,
-}
-
-type Snooze = {
-	type: 'snooze',
-	until: number
-}
-
-type ReadSnooze = {
-	type: 'readSnooze',
 }

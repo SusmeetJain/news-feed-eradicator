@@ -2,7 +2,7 @@ import { createSignal, createEffect, type Accessor, type Setter, createContext, 
 import type { QuoteList, QuoteListId } from "../../storage/schema";
 import { expect, originsForSite } from "../../lib/util";
 import type { SiteId, SiteList } from "../../types/sitelist";
-import { loadEnabledSites, loadHideQuotes, loadQuoteList, loadQuoteLists, loadSettingsLocked, loadSnoozeMode, saveHideQuotes, saveNewQuoteList, saveSettingsLocked } from "../../storage/storage";
+import { loadEnabledSites, loadHideQuotes, loadQuoteList, loadQuoteLists, loadSettingsLocked, saveHideQuotes, saveNewQuoteList, saveSettingsLocked } from "../../storage/storage";
 import type { Quote } from "../../quote";
 import { sendToServiceWorker } from "../../messaging/messages";
 import { getBrowser, type Permissions } from "../../lib/webextension";
@@ -36,7 +36,7 @@ type SiteState = {
 	permissionsEnabled: boolean,
 };
 
-export type PageId = 'sites' | 'snooze' | 'quotes' | 'style' | 'about' | 'debug';
+export type PageId = 'sites' | 'quotes' | 'style' | 'about' | 'debug';
 
 const browser = getBrowser();
 
@@ -51,8 +51,6 @@ export class OptionsPageState {
 	storage = new StorageState();
 
 	settingsLocked = resourceObj(createResource(loadSettingsLocked));
-	snoozeState = resourceObj(createResource<number | null>(async () => browser.runtime.sendMessage({ type: 'readSnooze' })));
-	snoozeMode = resourceObj(createResource(loadSnoozeMode));
 	enabledSites = resourceObj(createResource(loadEnabledSites));
 	hideQuotes = resourceObj(createResource(loadHideQuotes));
 	permissions = resourceObj(createResource(() => browser.permissions.getAll()));
@@ -174,29 +172,6 @@ export class OptionsPageState {
 		this.requestPermissions({ origins, permissions: [] });
 	}
 
-	async startSnooze(durationMs: number) {
-		await browser.runtime.sendMessage({
-			type: 'snooze',
-			until: this.clock.get() + durationMs,
-		})
-
-		this.snoozeState.refetch();
-	}
-
-	async cancelSnooze() {
-		await browser.runtime.sendMessage({
-			type: 'snooze',
-			until: this.clock.get(),
-		})
-		this.snoozeState.refetch();
-	}
-
-	snoozeRemaining() {
-		const snooze = this.snoozeState.get();
-		if (snooze == null) return 0;
-		return Math.max(0, snooze - this.clock.get());
-	}
-
 	async setSettingsLocked(locked: boolean) {
 		if (locked) {
 			this.selectedSiteId.set(null);
@@ -206,14 +181,14 @@ export class OptionsPageState {
 	}
 
 	/**
- * Returns true if the user is not currently allowed to change settings (eg not currently snoozing)
+ * Returns true if the user is not currently allowed to change settings.
  */
 	settingsLockedDown() {
 		return this.settingsLocked.get() ?? false;
 	}
 
 	canUnlockSettings() {
-		return this.snoozeRemaining() > 0;
+		return true;
 	}
 }
 

@@ -11,7 +11,7 @@ export const LockedSettingsOverlay = () => {
 					🔒 Settings locked down
 				</h3>
 				<p class="text-secondary">
-					To unlock, start snoozing then click the button below
+					Use the unlock button below to make changes
 				</p>
 			</div>
 		</div>
