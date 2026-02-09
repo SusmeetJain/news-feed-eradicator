@@ -11,6 +11,8 @@ A stricter fork of News Feed Eradicator that replaces social media feeds with a 
 ## Fork goals
 
 - No snooze UI or API path.
+- No site or region disable controls in the extension UI.
+- All supported sites are force-enabled by default.
 - Feed blocking stays active continuously.
 - Keep the codebase close to upstream where possible for easier maintenance.
 
@@ -26,7 +28,19 @@ git merge upstream/main
 git push origin main
 ```
 
-For strict-fork specific changes, use a branch and merge it into your `main` after syncing upstream.
+Keep `main` as your upstream-sync branch, and keep strict behavior on a long-lived `strict` branch.
+Sync flow:
+
+```bash
+git switch main
+git fetch upstream
+git merge upstream/main
+git push origin main
+
+git switch strict
+git merge main
+git push origin strict
+```
 
 ## Contributing back
 

@@ -22,9 +22,7 @@ browser.runtime.onInstalled.addListener(async (details) => {
 
 	console.log('Extension installed. Storage sync:', sync, 'local', local);
 
-	for (const siteId of local.enabledSites ?? []) {
-		await enableSite(siteId);
-	}
+	await ensureAllSitesEnabled();
 
 	if (details.reason === 'install') {
 		browser.runtime.openOptionsPage();
@@ -117,7 +115,17 @@ const enableSite = async (siteId: SiteId) => {
 			// world: "MAIN"
 		}]),
 	]);
+
+	return true;
 }
+
+const ensureAllSitesEnabled = async () => {
+	const siteList = await loadSitelist();
+	await Promise.allSettled(siteList.sites.map(site => enableSite(site.id)));
+}
+
+// Strict mode: enforce site blocking each worker startup.
+void migrationPromise.then(ensureAllSitesEnabled);
 
 const requestQuote = async () => {
 	const quoteLists = await loadQuoteLists();
@@ -166,7 +174,7 @@ const handleMessage = async (msg: ToServiceWorkerMessage, sender: MessageSender)
 						return { config: region, css: null, enabled: false };
 					}
 
-					const enabled = siteOptions.regionEnabledOverride[region.id] ?? region.default ?? true;
+					const enabled = region.default ?? true;
 
 					const selector = region.selectors.map(sanitizeSelector).join(',');
 					return { config: region, css: `${selector} { ${cssForType(region.type, regionHideStyle)} }`, enabled } ;
@@ -212,14 +220,8 @@ const handleMessage = async (msg: ToServiceWorkerMessage, sender: MessageSender)
 	}
 
 	if (msg.type === 'disableSite') {
-		await browser.scripting.unregisterContentScripts({ ids: [msg.siteId]});
-
-		const siteList = await loadSitelist();
-		const site = siteList.sites.find(site => site.id === msg.siteId);
-		if (site == null) return;
-
-		await saveSiteEnabled(site.id, false);
-
+		// Strict mode: never allow disabling a blocked site.
+		await enableSite(msg.siteId);
 		notifyTabsOptionsUpdated();
 	}
 

@@ -42,7 +42,7 @@ const OptionsPage = () => {
 
 	return <div class="flex axis-center text-figure">
 		<div class="w-full mw-lg space-y-8 py-4">
-			<h1 class="text-center font-3xl text-secondary">News Feed Eradicator</h1>
+			<h1 class="text-center font-3xl text-secondary">News Feed Eradicator Strict</h1>
 
 			<OptionsPageStateContext.Provider value={state}>
 				<Undo />

@@ -6,7 +6,7 @@ export default {
 	"description": packageJson.description,
 	"manifest_version": 3,
 	"permissions": ["storage", "scripting"],
-	"optional_host_permissions": ["*://*/*"],
+	"host_permissions": ["*://*/*"],
 	"action": {
 		"default_icon": {
 			"16": "assets/icons/logo-contrast-16.png",

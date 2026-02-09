@@ -38,7 +38,7 @@ type OptionsUpdated = {
 	type: 'nfe#optionsUpdated',
 }
 
-export type ToServiceWorkerMessage = RequestSiteDetails | OpenOptionsPage | NotifyOptionsUpdated | SetSiteTheme | EnableSite | DisableSite | RequestQuote | SetQuoteEnabled | InjectCss | RemoveCss;
+export type ToServiceWorkerMessage = RequestSiteDetails | OpenOptionsPage | NotifyOptionsUpdated | SetSiteTheme | EnableSite | DisableSite | RequestQuote | SetQuoteEnabled;
 
 // Request site details from service worker.
 type RequestSiteDetails = {
