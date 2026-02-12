@@ -5,7 +5,7 @@
   "description": "Strict News Feed Eradicator with always-on feed blocking",
   "author": "Jordan West",
   "license": "AGPL-3.0-only",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "type": "module",
   "module": "index.ts",
   "devDependencies": {
